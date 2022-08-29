@@ -10,7 +10,7 @@ import ARKit
 import RealityKit
 
 
-class Coordinator: NSObject, ARSessionDelegate{
+class Coordinator: NSObject{
     
     // Essa ARView foi populada com a ARview de "ContentView.swift"
     weak var view: ARView?
@@ -29,24 +29,31 @@ class Coordinator: NSObject, ARSessionDelegate{
         
         // Se results tiver detectado algum plano:
         if let result = results.first {
-            //Anchor
-            let anchor = ARAnchor(name: "Plane Anchor", transform: result.worldTransform)
-            view.session.add(anchor: anchor)
+            
+            //AnchorEntity
+            let anchorEntity = AnchorEntity(raycastResult: result)
             
             //Objeto 3D
             let modelEntity = ModelEntity(mesh: MeshResource.generateBox(size: 0.15))
+            
+            //Aciona o colisor para identificar as edições
+            modelEntity.generateCollisionShapes(recursive: true)
+            
             modelEntity.model?.materials = [SimpleMaterial(color: UIColor.randomColor(), isMetallic: true)]
             
-            //Anchor Entity
-            //Aqui você linka o "Anchor" no "Anchor Entity", e depois o "modelEntity" no "AnchorEntity".
-            let anchorEntity = AnchorEntity(anchor: anchor)
+            //Associar o ModelEntity com o AnchorEntity
             anchorEntity.addChild(modelEntity)
             
-            //Por fim, vc add seu "anchorEntity"(que já possúi um nó com o objeto 3D) na cena.
             view.scene.addAnchor(anchorEntity)
+            //Aciona o uso de gestures
+            view.installGestures(.all, for: modelEntity)
             
         }
   
     }
 
 }
+
+
+//ARAnchor é para ARKit Framework
+//AnchorEntity é para: RealityKit Framework

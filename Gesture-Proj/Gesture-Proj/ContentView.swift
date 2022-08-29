@@ -24,10 +24,7 @@ struct ARViewContainer: UIViewRepresentable {
         //Fazer o coordenator saber sobre a view:
         //Aqui você está passando esse arView local para a var do tipo view de Coordinator.
         context.coordinator.view = arView
-        
-        // Todos os eventos dessa ARView session vai ser delegada para coordinator, que por sua vez, tratará esses eventos.
-        arView.session.delegate = context.coordinator
-        
+                
         // Esse arView possúi um gestureRecognizer associado ao "Coordinator".
         return arView
         
